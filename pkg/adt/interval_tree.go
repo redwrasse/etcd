@@ -149,9 +149,11 @@ type nodeVisitor func(n *intervalNode) bool
 
 // visit will call a node visitor on each node that overlaps the given interval
 func (x *intervalNode) visit(iv *Interval, sentinel *intervalNode, nv nodeVisitor) bool {
+
 	if x == sentinel {
 		return true
 	}
+	fmt.Println("visited", x.iv)
 	v := iv.Compare(&x.iv.Ivl)
 	switch {
 	case v < 0:

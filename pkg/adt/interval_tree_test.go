@@ -306,6 +306,33 @@ func TestIntervalTreeStab(t *testing.T) {
 	assert.Len(t, ivt.Stab(NewStringPoint("6")), 1)
 }
 
+func TestIntervalTreeFind(t *testing.T) {
+
+	// Check that find([2,6]) on the below tree does not search the left subtree of [2,7]. Note that Insert inserts left if less than x.low, inserts right
+	// if geq. x.low. So for example if [2,7] node already exists, inserting [2,6] will insert it in its right subtree (can check this)
+
+	//   		  [3,6]
+	//			/        \
+	// 	   [2,7]         [5,9]
+	//    /     \        /    \
+	//	[0,3] [2,6]   [4,12] [7,10]
+
+	ivt := NewIntervalTree()
+	val := 123
+	ivt.Insert(NewInt64Interval(3, 6), val)
+	ivt.Insert(NewInt64Interval(2, 7), val)
+	ivt.Insert(NewInt64Interval(5, 9), val)
+	ivt.Insert(NewInt64Interval(4, 12), val)
+	ivt.Insert(NewInt64Interval(7, 10), val)
+	ivt.Insert(NewInt64Interval(0, 3), val)
+	ivt.Insert(NewInt64Interval(2, 6), val)
+
+	//fmt.Println(ivt)
+
+	ivt.Find(NewInt64Interval(2, 6))
+
+}
+
 type xy struct {
 	x int64
 	y int64
