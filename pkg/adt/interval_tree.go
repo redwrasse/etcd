@@ -72,19 +72,7 @@ func (ivl *Interval) Compare(c Comparable) int {
 		return 1
 	}
 
-	// For exact interval lookup (find operation): if left endpoints match, compare right endpoints:
-	//   if ivl right endpoint is < ivl2 right endpoint, return -1
-	//   if ivl right endpoint is > ivl2 right endpoint, return 1
-	if ivl.Begin.Compare(ivl2.Begin) == 0 {
-		if ivl.End.Compare(ivl2.End) < 0 {
-			return -1
-		}
-		if ivl.End.Compare(ivl2.End) > 0 {
-			return 1
-		}
-	}
-
-	// ivl overlaps with ivl2 (including possibility of matching exactly)
+	// ivl overlaps with ivl2
 	return 0
 }
 
