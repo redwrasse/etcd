@@ -312,6 +312,8 @@ func TestIntervalTreeFind(t *testing.T) {
 	// Check that find([2,6]) on the below tree does not search the left subtree of [2,7]. Note that Insert inserts left if less than x.low, inserts right
 	// if geq. x.low. So for example if [2,7] node already exists, inserting [2,6] will insert it in its right subtree (can check this)
 
+	// (update this looks a bit different now than below tree since changed Insert op to split based on right endpoints upon having matched left endpoints).
+
 	//		   	    [3,6]
 	//			/           \
 	// 	   [2,7]            [5,9]
