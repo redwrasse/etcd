@@ -15,6 +15,7 @@
 package adt
 
 import (
+	"fmt"
 	"math/rand"
 	"reflect"
 	"testing"
@@ -311,12 +312,13 @@ func TestIntervalTreeFind(t *testing.T) {
 	// Check that find([2,6]) on the below tree does not search the left subtree of [2,7]. Note that Insert inserts left if less than x.low, inserts right
 	// if geq. x.low. So for example if [2,7] node already exists, inserting [2,6] will insert it in its right subtree (can check this)
 
-	//   		  [3,6]
-	//			/        \
-	// 	   [2,7]         [5,9]
-	//    /     \        /    \
-	//	[0,3] [2,6]   [4,12] [7,10]
-
+	//		   	    [3,6]
+	//			/           \
+	// 	   [2,7]            [5,9]
+	//    /     \          /       \
+	//	[0,3] [2,6]    [4,12]   [7,10]
+	//  /		 \		 \	         \
+	// [-1,4]   [2,4]    [4,13]      [8,9]
 	ivt := NewIntervalTree()
 	val := 123
 	ivt.Insert(NewInt64Interval(3, 6), val)
@@ -326,10 +328,18 @@ func TestIntervalTreeFind(t *testing.T) {
 	ivt.Insert(NewInt64Interval(7, 10), val)
 	ivt.Insert(NewInt64Interval(0, 3), val)
 	ivt.Insert(NewInt64Interval(2, 6), val)
+	ivt.Insert(NewInt64Interval(-1, 4), val)
+	ivt.Insert(NewInt64Interval(2, 4), val)
+	ivt.Insert(NewInt64Interval(4, 13), val)
+	ivt.Insert(NewInt64Interval(8, 9), val)
 
 	//fmt.Println(ivt)
+	ivt.Visit(NewInt64Interval(-100, 100), func(n *IntervalValue) bool {
+		fmt.Println("my visitor:", n)
+		return true
+	})
 
-	ivt.Find(NewInt64Interval(2, 6))
+	//ivt.Find(NewInt64Interval(2, 6))
 
 }
 

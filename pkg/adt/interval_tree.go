@@ -153,7 +153,7 @@ func (x *intervalNode) visit(iv *Interval, sentinel *intervalNode, nv nodeVisito
 	if x == sentinel {
 		return true
 	}
-	fmt.Println("visited", x.iv)
+	//fmt.Println("visited", x.iv)
 	v := iv.Compare(&x.iv.Ivl)
 	switch {
 	case v < 0:
