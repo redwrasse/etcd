@@ -716,25 +716,21 @@ func (ivt *intervalTree) find(ivl Interval) *intervalNode {
 	x := ivt.root
 
 	// Search tree until hit sentinel or match left endpoints.
-	lc := ivl.Begin.Compare(x.iv.Ivl.Begin)
-	for x != ivt.sentinel && lc != 0 {
-		if lc < 0 {
+	for x != ivt.sentinel && ivl.Begin.Compare(x.iv.Ivl.Begin) != 0 {
+		if ivl.Begin.Compare(x.iv.Ivl.Begin) < 0 {
 			x = x.left
 		} else {
 			x = x.right
 		}
-		lc = ivl.Begin.Compare(x.iv.Ivl.Begin)
 	}
 
 	// Continue searching tree until hit sentinel or match right endpoints.
-	rc := ivl.End.Compare(x.iv.Ivl.End)
-	for x != ivt.sentinel && rc != 0 {
-		if rc < 0 {
+	for x != ivt.sentinel && ivl.End.Compare(x.iv.Ivl.End) != 0 {
+		if ivl.End.Compare(x.iv.Ivl.End) < 0 {
 			x = x.left
 		} else {
 			x = x.right
 		}
-		rc = ivl.End.Compare(x.iv.Ivl.End)
 	}
 
 	return x
