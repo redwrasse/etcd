@@ -363,7 +363,7 @@ func TestIntervalTreeRandom(t *testing.T) {
 	ivt := NewIntervalTree()
 	maxv := 15
 
-	rng := rand.New(rand.NewSource(123034))
+	rng := rand.New(rand.NewSource(12035))
 
 	// [1,2) doesn't look like it's in the right place- should be left child of [1,9)?
 
