@@ -16,6 +16,7 @@ package adt
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"reflect"
 	"testing"
@@ -364,6 +365,13 @@ func TestIntervalTreeRandom(t *testing.T) {
 
 	rng := rand.New(rand.NewSource(123034))
 
+	// [1,2) doesn't look like it's in the right place- should be left child of [1,9)?
+
+	//          [3, 9)
+	//  	  /		 \
+	//   [1,9)		[7, 11)
+	// 		\				\
+	//		[1,2)			[11, 14)
 	for i := rng.Intn(maxv) + 1; i != 0; i-- {
 		x, y := int64(rng.Intn(maxv)), int64(rng.Intn(maxv))
 		if x > y {
@@ -382,16 +390,27 @@ func TestIntervalTreeRandom(t *testing.T) {
 		ivs[iv] = struct{}{}
 	}
 
-	//for ab := range ivs {
-	//	for xy := range ivs {
-	//		v := xy.x + int64(rng.Intn(int(xy.y-xy.x)))
-	//		require.NotEmptyf(t, ivt.Stab(NewInt64Point(v)), "expected %v stab non-zero for [%+v)", v, xy)
-	//		require.Truef(t, ivt.Intersects(NewInt64Point(v)), "did not get %d as expected for [%+v)", v, xy)
-	//	}
-	//
-	//	assert.Truef(t, ivt.Delete(NewInt64Interval(ab.x, ab.y)), "did not delete %v as expected", ab)
-	//	delete(ivs, ab)
-	//}
+	// Run visitor on tree to print all nodes, for debugging.
+	ivt.Visit(NewInt64Interval(-100, 100), func(n *IntervalValue) bool {
+		fmt.Println("visiting:", n)
+		return true
+	})
+
+	for ab := range ivs {
+		for xy := range ivs {
+			v := xy.x + int64(rng.Intn(int(xy.y-xy.x)))
+			require.NotEmptyf(t, ivt.Stab(NewInt64Point(v)), "expected %v stab non-zero for [%+v)", v, xy)
+			require.Truef(t, ivt.Intersects(NewInt64Point(v)), "did not get %d as expected for [%+v)", v, xy)
+		}
+		deleted := ivt.Delete(NewInt64Interval(ab.x, ab.y))
+		if !deleted {
+			log.Printf("did not delete %v as expected", ab)
+		} else {
+			log.Printf("deleted %v as expected", ab)
+		}
+		//assert.Truef(t, ivt.Delete(NewInt64Interval(ab.x, ab.y)), "did not delete %v as expected", ab)
+		delete(ivs, ab)
+	}
 	assert.Equalf(t, 0, ivt.Len(), "got ivt.Len() = %v, expected 0", ivt.Len())
 }
 
