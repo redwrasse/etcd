@@ -468,6 +468,24 @@ func (ivt *intervalTree) createIntervalNode(ivl Interval, val any) *intervalNode
 //
 //	 RB-INSERT-FIXUP(T, z)
 
+//Insert(ivl)
+//x = root
+//for x != sentinel
+//// split on left endpoint; if left endpoitns match, split instead on right endpoints
+//if ivl.Begin < x.Begin
+//x = x.left
+//else if ivl.Begin == x.Begin
+//// Split on right endpoints
+//if ivl.End < x.End
+//x = x.left
+//else
+//x = x.right
+//else
+//// Go right.
+//x = x.right
+//
+//
+
 // Insert adds a node with the given interval into the tree.
 func (ivt *intervalTree) Insert(ivl Interval, val any) {
 	y := ivt.sentinel
@@ -475,16 +493,20 @@ func (ivt *intervalTree) Insert(ivl Interval, val any) {
 	x := ivt.root
 	for x != ivt.sentinel {
 		y = x
+		// Split on left endpoint; if left endpoints match, split instead on right endpoints.
+		// Follow convention: if less than: go left, if geq: go right.
 		if z.iv.Ivl.Begin.Compare(x.iv.Ivl.Begin) < 0 {
+			// Go left.
 			x = x.left
 		} else if z.iv.Ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 {
-			// Left endpoints match exactly, so continue splitting based on right endpoints.
+			// Left endpoints match, so split on right endpoints.
 			if z.iv.Ivl.End.Compare(x.iv.Ivl.End) < 0 {
 				x = x.left
 			} else {
 				x = x.right
 			}
 		} else {
+			// Go right.
 			x = x.right
 		}
 	}
@@ -720,56 +742,81 @@ func (ivt *intervalTree) Visit(ivl Interval, ivv IntervalVisitor) {
 // WIP: update this op to not use the visit method, but rather lookup by left endpoint then upon match
 // lookup by right endpoint.
 func (ivt *intervalTree) find(ivl Interval) *intervalNode {
-	fmt.Println("finding ", ivl.Begin, ivl.End)
+
 	x := ivt.root
-	fmt.Println("x = ", x.iv.Ivl.Begin, x.iv.Ivl.End)
 
-	fmt.Println("searching by left endpoint")
-	// Search tree until hit sentinel or match left endpoints.
-	for x != ivt.sentinel && ivl.Begin.Compare(x.iv.Ivl.Begin) != 0 {
-		fmt.Println("(left endpoint search iteration)")
+	// Search until hit sentinel or exact match.
+	for x != ivt.sentinel && !(ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 && ivl.End.Compare(x.iv.Ivl.End) == 0) {
+		// Split on left endpoint; if left endpoints match,
+		// split instead on right endpoints.
 		if ivl.Begin.Compare(x.iv.Ivl.Begin) < 0 {
+			// Go left.
 			x = x.left
-			fmt.Println("went left")
-		} else {
-			x = x.right
-			fmt.Println("went right")
-		}
-		fmt.Println("x = ", x.iv.Ivl.Begin, x.iv.Ivl.End)
-	}
-
-	if x != ivt.sentinel {
-		fmt.Println("matched left endpoint")
-	} else {
-		fmt.Println("no left match")
-	}
-
-	// Continue searching tree until hit sentinel or match right endpoints.
-	// Should be restricted iterations left/right to left endpoits remaining matching
-	for x != ivt.sentinel && ivl.End.Compare(x.iv.Ivl.End) != 0 {
-		fmt.Println("(right endpoint search iteration)")
-		if ivl.End.Compare(x.iv.Ivl.End) < 0 && ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 {
-			x = x.left
-			fmt.Println("went left")
 		} else if ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 {
-			x = x.right
-			fmt.Println("went right")
+			// Match on left endpoints, split on right endpoints.
+			if ivl.End.Compare(x.iv.Ivl.End) < 0 {
+				x = x.left
+			} else {
+				x = x.right
+			}
 		} else {
-			// left endpoints no longer match
-			break
+			// Go right.
+			x = x.right
 		}
-		fmt.Println("x = ", x.iv.Ivl.Begin, x.iv.Ivl.End)
-	}
-
-	if x == ivt.sentinel {
-		fmt.Println("oops")
-
-	} else {
-		fmt.Println("found match for ", ivl.Begin, ivl.End)
-
 	}
 
 	return x
+
+	//fmt.Println("finding ", ivl.Begin, ivl.End)
+	//x := ivt.root
+	//fmt.Println("x = ", x.iv.Ivl.Begin, x.iv.Ivl.End)
+	//
+	//fmt.Println("searching by left endpoint")
+	//// Search tree until hit sentinel or match left endpoints.
+	//for x != ivt.sentinel && ivl.Begin.Compare(x.iv.Ivl.Begin) != 0 {
+	//	fmt.Println("(left endpoint search iteration)")
+	//	if ivl.Begin.Compare(x.iv.Ivl.Begin) < 0 {
+	//		x = x.left
+	//		fmt.Println("went left")
+	//	} else {
+	//		x = x.right
+	//		fmt.Println("went right")
+	//	}
+	//	fmt.Println("x = ", x.iv.Ivl.Begin, x.iv.Ivl.End)
+	//}
+	//
+	//if x != ivt.sentinel {
+	//	fmt.Println("matched left endpoint")
+	//} else {
+	//	fmt.Println("no left match")
+	//}
+	//
+	//// Continue searching tree until hit sentinel or match right endpoints.
+	//// Should be restricted iterations left/right to left endpoits remaining matching
+	//for x != ivt.sentinel && ivl.End.Compare(x.iv.Ivl.End) != 0 {
+	//	fmt.Println("(right endpoint search iteration)")
+	//	if ivl.End.Compare(x.iv.Ivl.End) < 0 && ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 {
+	//		x = x.left
+	//		fmt.Println("went left")
+	//	} else if ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 {
+	//		x = x.right
+	//		fmt.Println("went right")
+	//	} else {
+	//		// left endpoints no longer match
+	//		break
+	//	}
+	//	fmt.Println("x = ", x.iv.Ivl.Begin, x.iv.Ivl.End)
+	//}
+	//
+	//if x == ivt.sentinel {
+	//	fmt.Println("oops")
+	//
+	//} else {
+	//	fmt.Println("found match for ", ivl.Begin, ivl.End)
+	//
+	//}
+	//
+	//return x
 
 	//ret := ivt.sentinel
 	//f := func(n *intervalNode) bool {

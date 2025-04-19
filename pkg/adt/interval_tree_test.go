@@ -401,7 +401,7 @@ func TestIntervalTreeRandom(t *testing.T) {
 	// ivs a set to keep track of intervals inserted so far
 	ivs := make(map[xy]struct{})
 	ivt := NewIntervalTree()
-	maxv := 1500
+	maxv := 150000
 	// FIXME flaky test why? Have set a seed.
 	rng := rand.New(rand.NewSource(12035))
 
@@ -413,7 +413,7 @@ func TestIntervalTreeRandom(t *testing.T) {
 	//		/		 \           /
 	//	   [2,6)	[6, 12)    [11, 14)
 	for i := rng.Intn(maxv) + 1; i != 0; i-- {
-		x, y := int64(rng.Intn(10)), int64(rng.Intn(10))
+		x, y := int64(rng.Intn(maxv)), int64(rng.Intn(maxv))
 		if x > y {
 			t := x
 			x = y
@@ -458,25 +458,25 @@ func TestIntervalTreeRandom(t *testing.T) {
 		// (ignore wrong) UPDATE: error appears to be in the delete op, not the find op, since if just check assertions on find, they always pass (not flakey)
 		// So there's some indeterminism in delete to be figured out.
 		//assert.NotNil(t, found)
-		//_ = ivt.Delete(NewInt64Interval(ab.x, ab.y))
+		deleted := ivt.Delete(NewInt64Interval(ab.x, ab.y))
 
 		//if !deleted {
 		//	fmt.Println("not deleted")
 		//}
 
-		//assert.True(t, deleted)
+		assert.True(t, deleted)
 		//if !deleted {
 		//	log.Printf("did not delete %v as expected", ab)
 		//} else {
 		//	log.Printf("deleted %v as expected", ab)
 		//}
 		//assert.Truef(t, ivt.Delete(NewInt64Interval(ab.x, ab.y)), "did not delete %v as expected", ab)
-		//delete(ivs, ab)
+		delete(ivs, ab)
 		//n--
 		//assert.Equal(t, n, ivt.Len())
 	}
-	//ln := ivt.Len()
-	//assert.Equalf(t, 0, ln, "got ivt.Len() = %v, expected 0", ivt.Len())
+	ln := ivt.Len()
+	assert.Equalf(t, 0, ln, "got ivt.Len() = %v, expected 0", ivt.Len())
 }
 
 // TestIntervalTreeSortedVisit tests that intervals are visited in sorted order.
