@@ -718,13 +718,18 @@ func (ivt *intervalTree) Visit(ivl Interval, ivv IntervalVisitor) {
 func (ivt *intervalTree) find(ivl Interval) *intervalNode {
 	x := ivt.root
 	// Search until hit sentinel or exact match.
-	for x != ivt.sentinel && !(ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 && ivl.End.Compare(x.iv.Ivl.End) == 0) {
+	for x != ivt.sentinel {
+		beginCompare := ivl.Begin.Compare(x.iv.Ivl.Begin)
+		endCompare := ivl.End.Compare(x.iv.Ivl.End)
+		if beginCompare == 0 && endCompare == 0 {
+			return x
+		}
 		// Split on left endpoint. If left endpoints match,
 		// instead split on right endpoints.
-		if ivl.Begin.Compare(x.iv.Ivl.Begin) < 0 {
+		if beginCompare < 0 {
 			x = x.left
-		} else if ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 {
-			if ivl.End.Compare(x.iv.Ivl.End) < 0 {
+		} else if beginCompare == 0 {
+			if endCompare < 0 {
 				x = x.left
 			} else {
 				x = x.right
