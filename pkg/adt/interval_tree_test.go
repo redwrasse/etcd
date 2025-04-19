@@ -311,6 +311,14 @@ type xy struct {
 	y int64
 }
 
+func BenchmarkIntervalTreeRandom(b *testing.B) {
+
+}
+
+func generateRandomTree() {
+
+}
+
 func TestIntervalTreeRandom(t *testing.T) {
 	// generate unique intervals
 	ivs := make(map[xy]struct{})
