@@ -312,11 +312,38 @@ type xy struct {
 }
 
 func BenchmarkIntervalTreeRandom(b *testing.B) {
+	ivs := make(map[xy]struct{})
+	ivt := NewIntervalTree()
+	maxv := 128
 
-}
+	xmax := 10
+	ymax := 10
 
-func generateRandomTree() {
+	// Setup random tree.
+	for i := rand.Intn(maxv) + 1; i != 0; i-- {
+		x, y := int64(rand.Intn(xmax)), int64(rand.Intn(ymax))
+		if x > y {
+			t := x
+			x = y
+			y = t
+		} else if x == y {
+			y++
+		}
+		iv := xy{x, y}
+		if _, ok := ivs[iv]; ok {
+			// don't double insert
+			continue
+		}
+		ivt.Insert(NewInt64Interval(x, y), 123)
+		ivs[iv] = struct{}{}
+	}
 
+	// Benchmark Find() operation time.
+	for b.Loop() {
+		for ab := range ivs {
+			_ = ivt.Find(NewInt64Interval(ab.x, ab.y))
+		}
+	}
 }
 
 func TestIntervalTreeRandom(t *testing.T) {
