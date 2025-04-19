@@ -473,9 +473,10 @@ func (ivt *intervalTree) Insert(ivl Interval, val any) {
 	for x != ivt.sentinel {
 		y = x
 		// Split on left endpoint. If left endpoints match, instead split on right endpoint.
-		if z.iv.Ivl.Begin.Compare(x.iv.Ivl.Begin) < 0 {
+		beginCompare := z.iv.Ivl.Begin.Compare(x.iv.Ivl.Begin)
+		if beginCompare < 0 {
 			x = x.left
-		} else if z.iv.Ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 {
+		} else if beginCompare == 0 {
 			if z.iv.Ivl.End.Compare(x.iv.Ivl.End) < 0 {
 				x = x.left
 			} else {
@@ -490,9 +491,10 @@ func (ivt *intervalTree) Insert(ivl Interval, val any) {
 	if y == ivt.sentinel {
 		ivt.root = z
 	} else {
-		if z.iv.Ivl.Begin.Compare(y.iv.Ivl.Begin) < 0 {
+		beginCompare := z.iv.Ivl.Begin.Compare(y.iv.Ivl.Begin)
+		if beginCompare < 0 {
 			y.left = z
-		} else if z.iv.Ivl.Begin.Compare(y.iv.Ivl.Begin) == 0 {
+		} else if beginCompare == 0 {
 			if z.iv.Ivl.End.Compare(y.iv.Ivl.End) < 0 {
 				y.left = z
 			} else {
