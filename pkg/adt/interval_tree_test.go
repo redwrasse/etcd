@@ -336,17 +336,20 @@ func TestIntervalTreeFind(t *testing.T) {
 	val := 123
 
 	intervals := []Interval{
+		// UPDATED sample small tree that fails assertions- can walk through this example
+		// to figure out where delete is going wrong.
 		NewInt64Interval(3, 6),
+		NewInt64Interval(3, 4),
 		NewInt64Interval(2, 7),
 		NewInt64Interval(5, 9),
 		NewInt64Interval(4, 12),
-		NewInt64Interval(7, 10),
-		NewInt64Interval(0, 3),
-		NewInt64Interval(2, 6),
-		NewInt64Interval(-1, 4),
-		NewInt64Interval(2, 4),
-		NewInt64Interval(4, 13),
-		NewInt64Interval(8, 9),
+		//NewInt64Interval(7, 10),
+		//NewInt64Interval(0, 3),
+		//NewInt64Interval(2, 6),
+		//NewInt64Interval(-1, 4),
+		//NewInt64Interval(2, 4),
+		//NewInt64Interval(4, 13),
+		//NewInt64Interval(8, 9),
 	}
 
 	for _, iv := range intervals {
@@ -448,7 +451,7 @@ func TestIntervalTreeRandom(t *testing.T) {
 		//	log.Printf("deleted %v as expected", ab)
 		//}
 		//assert.Truef(t, ivt.Delete(NewInt64Interval(ab.x, ab.y)), "did not delete %v as expected", ab)
-		//delete(ivs, ab)
+		delete(ivs, ab)
 		//n--
 		//assert.Equal(t, n, ivt.Len())
 	}
