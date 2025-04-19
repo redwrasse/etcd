@@ -314,7 +314,7 @@ type xy struct {
 func BenchmarkIntervalTreeRandom(b *testing.B) {
 	ivs := make(map[xy]struct{})
 	ivt := NewIntervalTree()
-	maxv := 128
+	maxv := 1280
 
 	xmax := 10
 	ymax := 10
