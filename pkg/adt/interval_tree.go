@@ -472,8 +472,7 @@ func (ivt *intervalTree) Insert(ivl Interval, val any) {
 	x := ivt.root
 	for x != ivt.sentinel {
 		y = x
-		// Split on left endpoints. If left
-		// endpoints match, instead split on right endpoints.
+		// Split on left endpoint. If left endpoints match, instead split on right endpoint.
 		if z.iv.Ivl.Begin.Compare(x.iv.Ivl.Begin) < 0 {
 			x = x.left
 		} else if z.iv.Ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 {
@@ -716,10 +715,10 @@ func (ivt *intervalTree) Visit(ivl Interval, ivv IntervalVisitor) {
 // find the exact node for a given interval
 func (ivt *intervalTree) find(ivl Interval) *intervalNode {
 	x := ivt.root
-	// Search until hit sentinel or exact match. Split on left endpoints. If left
-	// endpoints match, instead split on right endpoints.
-	// FIXME: don't recompute Compare().
-	for x != ivt.sentinel && !(ivl.Begin.Compare(x.iv.Ivl.Begin) == ivl.End.Compare(x.iv.Ivl.End)) {
+	// Search until hit sentinel or exact match.
+	for x != ivt.sentinel && !(ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 && ivl.End.Compare(x.iv.Ivl.End) == 0) {
+		// Split on left endpoint. If left endpoints match,
+		// instead split on right endpoints.
 		if ivl.Begin.Compare(x.iv.Ivl.Begin) < 0 {
 			x = x.left
 		} else if ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 {
@@ -732,7 +731,6 @@ func (ivt *intervalTree) find(ivl Interval) *intervalNode {
 			x = x.right
 		}
 	}
-
 	return x
 }
 
