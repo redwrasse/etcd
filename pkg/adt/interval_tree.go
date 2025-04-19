@@ -745,7 +745,7 @@ func (ivt *intervalTree) find(ivl Interval) *intervalNode {
 	}
 
 	// Continue searching tree until hit sentinel or match right endpoints.
-	// FIXME should be restricted iterations left/right to left endpoits remaining matching!!
+	// Should be restricted iterations left/right to left endpoits remaining matching
 	for x != ivt.sentinel && ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 && ivl.End.Compare(x.iv.Ivl.End) != 0 {
 		fmt.Println("(right endpoint search iteration)")
 		if ivl.End.Compare(x.iv.Ivl.End) < 0 {

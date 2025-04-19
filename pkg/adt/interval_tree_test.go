@@ -16,12 +16,11 @@ package adt
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"math/rand"
 	"reflect"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 // TestIntervalTreeInsert tests interval tree insertion.
@@ -384,7 +383,7 @@ func TestIntervalTreeRandom(t *testing.T) {
 	// ivs a set to keep track of intervals inserted so far
 	ivs := make(map[xy]struct{})
 	ivt := NewIntervalTree()
-	maxv := 15
+	maxv := 1500
 	// FIXME flaky test why? Have set a seed.
 	rng := rand.New(rand.NewSource(12035))
 
@@ -396,7 +395,7 @@ func TestIntervalTreeRandom(t *testing.T) {
 	//		/		 \           /
 	//	   [2,6)	[6, 12)    [11, 14)
 	for i := rng.Intn(maxv) + 1; i != 0; i-- {
-		x, y := int64(rng.Intn(maxv)), int64(rng.Intn(maxv))
+		x, y := int64(rng.Intn(10)), int64(rng.Intn(10))
 		if x > y {
 			t := x
 			x = y
@@ -435,8 +434,13 @@ func TestIntervalTreeRandom(t *testing.T) {
 		}
 		// UPDATE: error appears to be in the delete op, not the find op, since if just check assertions on find, they always pass (not flakey)
 		// So there's some indeterminism in delete to be figured out.
-		//assert.NotNil(t, found)
-		//deleted := ivt.Delete(NewInt64Interval(ab.x, ab.y))
+		assert.NotNil(t, found)
+		_ = ivt.Delete(NewInt64Interval(ab.x, ab.y))
+
+		//if !deleted {
+		//	fmt.Println("not deleted")
+		//}
+
 		//assert.True(t, deleted)
 		//if !deleted {
 		//	log.Printf("did not delete %v as expected", ab)
