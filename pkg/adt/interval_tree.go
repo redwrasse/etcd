@@ -746,22 +746,27 @@ func (ivt *intervalTree) find(ivl Interval) *intervalNode {
 
 	// Continue searching tree until hit sentinel or match right endpoints.
 	// Should be restricted iterations left/right to left endpoits remaining matching
-	for x != ivt.sentinel && ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 && ivl.End.Compare(x.iv.Ivl.End) != 0 {
+	for x != ivt.sentinel && ivl.End.Compare(x.iv.Ivl.End) != 0 {
 		fmt.Println("(right endpoint search iteration)")
-		if ivl.End.Compare(x.iv.Ivl.End) < 0 {
+		if ivl.End.Compare(x.iv.Ivl.End) < 0 && ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 {
 			x = x.left
 			fmt.Println("went left")
-		} else {
+		} else if ivl.Begin.Compare(x.iv.Ivl.Begin) == 0 {
 			x = x.right
 			fmt.Println("went right")
+		} else {
+			// left endpoints no longer match
+			break
 		}
 		fmt.Println("x = ", x.iv.Ivl.Begin, x.iv.Ivl.End)
 	}
 
 	if x == ivt.sentinel {
 		fmt.Println("oops")
+
 	} else {
 		fmt.Println("found match for ", ivl.Begin, ivl.End)
+
 	}
 
 	return x

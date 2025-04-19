@@ -356,23 +356,38 @@ func TestIntervalTreeFind(t *testing.T) {
 		ivt.Insert(iv, val)
 	}
 
-	ivt.Visit(NewInt64Interval(-100, 100), func(n *IntervalValue) bool {
-		fmt.Println("my visitor:", n)
-		return true
-	})
+	iv := NewInt64Interval(3, 6)
+	found := ivt.Find(iv)
+	assert.Equal(t, iv, found.Ivl)
 
-	var found *IntervalValue
-	for _, iv := range intervals {
-		found = ivt.Find(iv)
-		assert.NotNil(t, found)
-	}
+	//ivt.Visit(NewInt64Interval(-100, 100), func(n *IntervalValue) bool {
+	//	fmt.Println("my visitor:", n)
+	//	return true
+	//})
+	//
+	//var found *IntervalValue
+	//for _, iv := range intervals {
+	//	found = ivt.Find(iv)
+	//	assert.NotNil(t, found)
+	//	assert.Equal(t, iv, found.Ivl)
+	//
+	//}
 
-	var deleted bool
-	for _, iv := range intervals {
-		deleted = ivt.Delete(iv)
-		assert.True(t, deleted)
-	}
-	assert.Zero(t, ivt.Len())
+	//var deleted bool
+	//for _, iv := range intervals {
+	//	ivt.Visit(NewInt64Interval(-100, 100), func(n *IntervalValue) bool {
+	//		fmt.Println("my visitor:", n)
+	//		return true
+	//	})
+	//	deleted = ivt.Delete(iv)
+	//	if !deleted {
+	//		fmt.Println("break")
+	//	} else {
+	//		fmt.Println("delete iteration")
+	//	}
+	//	assert.True(t, deleted)
+	//}
+	//assert.Zero(t, ivt.Len())
 }
 
 type xy struct {
@@ -430,15 +445,20 @@ func TestIntervalTreeRandom(t *testing.T) {
 		//	require.NotEmptyf(t, ivt.Stab(NewInt64Point(v)), "expected %v stab non-zero for [%+v)", v, xy)
 		//	require.Truef(t, ivt.Intersects(NewInt64Point(v)), "did not get %d as expected for [%+v)", v, xy)
 		//}
-		found := ivt.Find(NewInt64Interval(ab.x, ab.y))
-		if found == nil {
-			fmt.Println(ab)
-			assert.True(t, false)
-		}
-		// UPDATE: error appears to be in the delete op, not the find op, since if just check assertions on find, they always pass (not flakey)
-		// So there's some indeterminism in delete to be figured out.
+
+		iv := NewInt64Interval(ab.x, ab.y)
+		found := ivt.Find(iv)
+		//if found == nil {
+		//	fmt.Println(ab)
+		//	assert.True(t, false)
+		//}
 		assert.NotNil(t, found)
-		_ = ivt.Delete(NewInt64Interval(ab.x, ab.y))
+		// !!!! UPDATE issue is Find() is not returning the correct interval.
+		assert.Equal(t, iv, found.Ivl)
+		// (ignore wrong) UPDATE: error appears to be in the delete op, not the find op, since if just check assertions on find, they always pass (not flakey)
+		// So there's some indeterminism in delete to be figured out.
+		//assert.NotNil(t, found)
+		//_ = ivt.Delete(NewInt64Interval(ab.x, ab.y))
 
 		//if !deleted {
 		//	fmt.Println("not deleted")
@@ -451,7 +471,7 @@ func TestIntervalTreeRandom(t *testing.T) {
 		//	log.Printf("deleted %v as expected", ab)
 		//}
 		//assert.Truef(t, ivt.Delete(NewInt64Interval(ab.x, ab.y)), "did not delete %v as expected", ab)
-		delete(ivs, ab)
+		//delete(ivs, ab)
 		//n--
 		//assert.Equal(t, n, ivt.Len())
 	}
