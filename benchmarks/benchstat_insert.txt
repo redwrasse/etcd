@@ -1,0 +1,7 @@
+goos: darwin
+goarch: arm64
+pkg: go.etcd.io/etcd/pkg/v3/adt
+cpu: Apple M1 Pro
+                            │ old_insert.txt │        new_insert.txt         │
+                            │     sec/op     │   sec/op     vs base          │
+IntervalTreeRandomInsert-10      2.195µ ± 3%   2.228µ ± 2%  ~ (p=0.190 n=10)

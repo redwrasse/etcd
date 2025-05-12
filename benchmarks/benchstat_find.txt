@@ -1,0 +1,7 @@
+goos: darwin
+goarch: arm64
+pkg: go.etcd.io/etcd/pkg/v3/adt
+cpu: Apple M1 Pro
+                          │ old_find.txt  │             new_find.txt             │
+                          │    sec/op     │    sec/op     vs base                │
+IntervalTreeRandomFind-10   15.304µ ± 50%   1.727µ ± 34%  -88.71% (p=0.000 n=10)
