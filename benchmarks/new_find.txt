@@ -1,0 +1,16 @@
+goos: darwin
+goarch: arm64
+pkg: go.etcd.io/etcd/pkg/v3/adt
+cpu: Apple M1 Pro
+BenchmarkIntervalTreeRandomFind-10    	  698035	      1720 ns/op
+BenchmarkIntervalTreeRandomFind-10    	 2167977	       553.4 ns/op
+BenchmarkIntervalTreeRandomFind-10    	  692677	      1734 ns/op
+BenchmarkIntervalTreeRandomFind-10    	 1000000	      1142 ns/op
+BenchmarkIntervalTreeRandomFind-10    	  667176	      1797 ns/op
+BenchmarkIntervalTreeRandomFind-10    	  714930	      1679 ns/op
+BenchmarkIntervalTreeRandomFind-10    	  778672	      1543 ns/op
+BenchmarkIntervalTreeRandomFind-10    	  687740	      1745 ns/op
+BenchmarkIntervalTreeRandomFind-10    	  659038	      1823 ns/op
+BenchmarkIntervalTreeRandomFind-10    	  643330	      1859 ns/op
+PASS
+ok  	go.etcd.io/etcd/pkg/v3/adt	12.244s

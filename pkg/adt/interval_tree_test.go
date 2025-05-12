@@ -533,3 +533,71 @@ func TestIntervalTreeContains(t *testing.T) {
 		assert.Equalf(t, v, tt.wContains, "#%d: ivt.Contains got %v, expected %v", i, v, tt.wContains)
 	}
 }
+
+// Benchmark of the Insert op on random interval trees of up to 128 nodes with endpoint values in 0..9
+func BenchmarkIntervalTreeRandomInsert(b *testing.B) {
+	ivs := make(map[xy]struct{})
+	ivt := NewIntervalTree()
+	maxv := 128
+
+	xmax := 10
+	ymax := 10
+
+	for b.Loop() {
+		// Setup random tree.
+		for i := rand.Intn(maxv) + 1; i != 0; i-- {
+			x, y := int64(rand.Intn(xmax)), int64(rand.Intn(ymax))
+			if x > y {
+				t := x
+				x = y
+				y = t
+			} else if x == y {
+				y++
+			}
+			iv := xy{x, y}
+			if _, ok := ivs[iv]; ok {
+				// don't double insert
+				continue
+			}
+			ivt.Insert(NewInt64Interval(x, y), 123)
+			ivs[iv] = struct{}{}
+		}
+	}
+
+}
+
+// Benchmark of the Find op on random interval trees of up to 128 nodes with endpoint values in 0..9
+func BenchmarkIntervalTreeRandomFind(b *testing.B) {
+	ivs := make(map[xy]struct{})
+	ivt := NewIntervalTree()
+	maxv := 128
+
+	xmax := 10
+	ymax := 10
+
+	// Setup random tree.
+	for i := rand.Intn(maxv) + 1; i != 0; i-- {
+		x, y := int64(rand.Intn(xmax)), int64(rand.Intn(ymax))
+		if x > y {
+			t := x
+			x = y
+			y = t
+		} else if x == y {
+			y++
+		}
+		iv := xy{x, y}
+		if _, ok := ivs[iv]; ok {
+			// don't double insert
+			continue
+		}
+		ivt.Insert(NewInt64Interval(x, y), 123)
+		ivs[iv] = struct{}{}
+	}
+
+	// Benchmark Find() operation time.
+	for b.Loop() {
+		for ab := range ivs {
+			_ = ivt.Find(NewInt64Interval(ab.x, ab.y))
+		}
+	}
+}
