@@ -701,17 +701,39 @@ func (ivt *intervalTree) Visit(ivl Interval, ivv IntervalVisitor) {
 
 // find the exact node for a given interval
 func (ivt *intervalTree) find(ivl Interval) *intervalNode {
-	ret := ivt.sentinel
-	f := func(n *intervalNode) bool {
-		if n.iv.Ivl != ivl {
-			return true
+	x := ivt.root
+	// Search until hit sentinel or exact match.
+	for x != ivt.sentinel {
+		beginCompare := ivl.Begin.Compare(x.iv.Ivl.Begin)
+		endCompare := ivl.End.Compare(x.iv.Ivl.End)
+		if beginCompare == 0 && endCompare == 0 {
+			// Found a match.
+			return x
 		}
-		ret = n
-		return false
+		// Split on left endpoint: if less than, go left, else go right.
+		if beginCompare < 0 {
+			x = x.left
+		} else {
+			x = x.right
+		}
 	}
-	ivt.root.visit(&ivl, ivt.sentinel, f)
-	return ret
+	return x
 }
+
+//
+//// find the exact node for a given interval
+//func (ivt *intervalTree) find(ivl Interval) *intervalNode {
+//	ret := ivt.sentinel
+//	f := func(n *intervalNode) bool {
+//		if n.iv.Ivl != ivl {
+//			return true
+//		}
+//		ret = n
+//		return false
+//	}
+//	ivt.root.visit(&ivl, ivt.sentinel, f)
+//	return ret
+//}
 
 // Find gets the IntervalValue for the node matching the given interval
 func (ivt *intervalTree) Find(ivl Interval) (ret *IntervalValue) {

@@ -267,6 +267,41 @@ func TestIntervalTreeDelete(t *testing.T) {
 	}
 	visitsAfterDelete11 := tr.visitLevel()
 	require.Truef(t, reflect.DeepEqual(expectedAfterDelete11, visitsAfterDelete11), "level order after deleting '11' expected %v, got %v", expectedAfterDelete11, visitsAfterDelete11)
+
+}
+
+func TestProposedFindExample(t *testing.T) {
+
+	ivt := NewIntervalTree()
+
+	lEndp := int64(2)
+	rEndps := []int64{7, 3, 9}
+	val := 123
+
+	for _, re := range rEndps {
+		ivt.Insert(NewInt64Interval(lEndp, re), val)
+	}
+
+	// What we would expect from 'insert left if less than left endpoint, else insert right' without tree rotations:
+	// (we can generate this tree by commenting out the `ivt.insertFixup(z)` line in the `Insert` op)
+	//  Insert [2, 7), then Insert [2, 3), then Insert [2, 9) becomes:
+	//   	[2, 7)
+	//	        \
+	//  		[2, 3)
+	//				\
+	//			  [2, 9)
+
+	// Instead, due to rotations (rb-fixup), we get:
+	//      [2, 3)
+	//     /     \
+	//  [2, 7)   [2, 9)
+
+	// Find fails because it assumes the former tree structure, eg. thinks it can always search right in the above example:
+	for _, re := range rEndps {
+		ivl := NewInt64Interval(lEndp, re)
+		assert.NotNil(t, ivt.Find(ivl))
+		assert.Equal(t, ivl, ivt.Find(ivl).Ivl)
+	}
 }
 
 func TestIntervalTreeFind(t *testing.T) {
